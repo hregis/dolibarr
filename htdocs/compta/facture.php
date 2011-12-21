@@ -81,7 +81,6 @@ include_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
 $hookmanager=new HookManager($db);
 $hookmanager->callHooks(array('invoicecard'));
 
-
 /*
  * Actions
  */
