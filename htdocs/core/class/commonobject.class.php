@@ -665,6 +665,8 @@ abstract class CommonObject
         $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$table;
         $sql.= " WHERE ".$field." = '".$key."'";
         $sql.= " AND entity = ".$conf->entity;
+
+        dol_syslog(get_class($this).'::fetchObjectFrom sql='.$sql);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -690,6 +692,7 @@ abstract class CommonObject
         $sql = "SELECT ".$field." FROM ".MAIN_DB_PREFIX.$table;
         $sql.= " WHERE rowid = ".$id;
 
+        dol_syslog(get_class($this).'::getValueFrom sql='.$sql);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -2139,7 +2142,7 @@ abstract class CommonObject
     	$this->db->begin();
 
     	$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-    	$sql.= ' SET extraparams = "'.$this->db->escape(dol_json_encode($this->extraparams)).'"';
+    	$sql.= ' SET extraparams = "'.$this->db->escape(json_encode($this->extraparams)).'"';
     	$sql.= ' WHERE rowid = '.$this->id;
 
     	dol_syslog(get_class($this)."::setExtraParameters sql=".$sql, LOG_DEBUG);
@@ -2413,7 +2416,7 @@ abstract class CommonObject
             }
             else
             {
-                $this->printLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected,$hookmanager);
+                $this->printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected,$hookmanager);
             }
 
             $i++;
@@ -2430,8 +2433,8 @@ abstract class CommonObject
      *
      *  @param	string		$action				GET/POST action
      * 	@param	array	    $line		       	Selected object line to output
-     *  @param  string	    $var               	Is it a an odd line
-     *  @param  int		    $num               	Number of line
+     *  @param  string	    $var               	Is it a an odd line (true)
+     *  @param  int		    $num               	Number of line (0)
      *  @param  int		    $i					I
      *  @param  int		    $dateSelector      	1=Show also date range input fields
      *  @param  string	    $seller            	Object of seller third party
@@ -2440,7 +2443,7 @@ abstract class CommonObject
      *  @param	HookManager	$hookmanager		Hook manager
      *  @return	void
 	 */
-	function printLine($action,$line,$var=true,$num=0,$i=0,$dateSelector=0,$seller,$buyer,$selected=0,$hookmanager=false)
+	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0,$hookmanager=false)
 	{
 		global $conf,$langs,$user;
 		global $form,$bc,$bcdd;

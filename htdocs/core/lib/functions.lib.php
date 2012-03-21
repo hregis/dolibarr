@@ -146,32 +146,6 @@ if (! function_exists('json_decode'))
 }
 
 /**
- * 	Function that encodes data in json format
- *
- * 	@param	mixed	$elements	PHP object to json encode
- * 	@return	string				Json encoded string
- */
-function dol_json_encode($elements)
-{
-	return json_encode($elements);
-}
-
-/**
- * 	Function that decodes data from json format
- *
- * 	@param	string	$json		Json encoded to PHP Object or Array
- * 	@param	bool	$assoc		False return an object, true return an array
- * 	@return mixed				Object or Array
- */
-function dol_json_decode($json, $assoc=false)
-{
-	$out='';
-	$out = @unserialize($json); // For compatibility, test if serialized
-	if (empty($out)) $out = json_decode($json, $assoc);
-	return $out;
-}
-
-/**
  * Function to return value of a static property when class
  * name is dynamically defined (not hard coded).
  * This is because $myclass::$myvar works from PHP 5.3.0+ only
@@ -1127,8 +1101,8 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 function dol_now($mode='gmt')
 {
     // Note that gmmktime and mktime return same value (GMT) whithout parameters
-    if ($mode == 'gmt') $ret=gmmktime();	// Time for now at greenwich.
-    else if ($mode == 'tzserver')			// Time for now with PHP server timezone added
+    if ($mode == 'gmt') $ret=time();	// Time for now at greenwich.
+    else if ($mode == 'tzserver')		// Time for now with PHP server timezone added
     {
         require_once(DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php');
         $tzsecond=getServerTimeZoneInt();    // Contains tz+dayling saving time
@@ -1457,8 +1431,8 @@ function isValidEmail($address)
 /**
  *  Return true if phone number syntax is ok
  *
- *  @param      string		$address    phone (Ex: "0601010101")
- *  @return     boolean     			true if phone syntax is OK, false if KO or empty string
+ *  @param	string		$phone		phone (Ex: "0601010101")
+ *  @return boolean     			true if phone syntax is OK, false if KO or empty string
  */
 function isValidPhone($phone)
 {
@@ -4074,7 +4048,7 @@ function printCommonFooter($zone='private')
         {
             print ' - Zend encoded file: '.(zend_loader_file_encoded()?'yes':'no');
         }
-        print '")'."\n";
+        print '");'."\n";
         print '</script>'."\n";
 
         // Add Xdebug coverage of code
