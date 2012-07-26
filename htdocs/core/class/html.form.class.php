@@ -1359,10 +1359,10 @@ class Form
         $sql.= " s.nom";
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
+        if ($socid) $sql.= " AND pfp.fk_soc = ".$socid;
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON pfp.fk_soc = s.rowid";
         $sql.= " WHERE p.entity IN (".getEntity('product', 1).")";
         $sql.= " AND p.tobuy = 1";
-        if ($socid) $sql.= " AND pfp.fk_soc = ".$socid;
         if (strval($filtertype) != '') $sql.=" AND p.fk_product_type=".$filtertype;
         if (! empty($filtre)) $sql.=" ".$filtre;
         // Add criteria on ref/label
@@ -3297,7 +3297,7 @@ class Form
             // Generate the date part, depending on the use or not of the javascript calendar
             if (empty($conf->global->MAIN_POPUP_CALENDAR) || $conf->global->MAIN_POPUP_CALENDAR == "eldy")
             {
-                $base=DOL_URL_ROOT.'/core/lib/';
+                $base=DOL_URL_ROOT.'/core/';
                 $reset_scripts .= 'resetDP(\''.$base.'\',\''.$prefix.'\',\''.$langs->trans("FormatDateShortJava").'\',\''.$langs->defaultlang.'\');';
             }
             else
