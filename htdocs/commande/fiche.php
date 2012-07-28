@@ -1302,6 +1302,9 @@ $formorder = new FormOrder($db);
  *********************************************************************/
 if ($action == 'create' && $user->rights->commande->creer)
 {
+	//WYSIWYG Editor
+	require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+
     print_fiche_titre($langs->trans('CreateOrder'));
 
     dol_htmloutput_mesg($mesg,$mesgs,'error');
@@ -1480,13 +1483,10 @@ if ($action == 'create' && $user->rights->commande->creer)
         }
     }
 
-    //WYSIWYG Editor
-    include_once(DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php');
-
     // Template to use by default
     print '<tr><td>'.$langs->trans('Model').'</td>';
     print '<td colspan="2">';
-
+    include_once(DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php');
     $liste=ModelePDFCommandes::liste_modeles($db);
     print $form->selectarray('model',$liste,$conf->global->COMMANDE_ADDON_PDF);
     print "</td></tr>";
@@ -1495,7 +1495,7 @@ if ($action == 'create' && $user->rights->commande->creer)
     print '<tr>';
     print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
     print '<td valign="top" colspan="2">';
-    require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
+
     $doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
     print $doleditor->Create(1);
     //print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_public.'</textarea>';
@@ -1507,8 +1507,8 @@ if ($action == 'create' && $user->rights->commande->creer)
         print '<tr>';
         print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
         print '<td valign="top" colspan="2">';
-        require_once(DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php");
-        $doleditor=new DolEditor('note', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
+
+        $doleditor = new DolEditor('note', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
         print $doleditor->Create(1);
         //print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'</textarea>';
         print '</td></tr>';
