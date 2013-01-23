@@ -219,10 +219,6 @@ if ($action == 'add' && $canadduser)
         		$edituser->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
         	}
         }
-        else if (! empty($_POST["admin"]))
-        {
-        	$edituser->entity=0;
-        }
         else
         {
         	$edituser->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
@@ -336,10 +332,6 @@ if ($action == 'update' && ! $_POST["cancel"])
             	{
             		$edituser->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
             	}
-            }
-            else if(! empty($_POST["admin"]))
-            {
-            	$edituser->entity=0;
             }
             else
             {
@@ -1236,7 +1228,7 @@ else
 
             print '<div class="tabsAction">';
 
-            if ($caneditfield && (empty($conf->multicompany->enabled) || ! $user->entity || ($fuser->entity == $conf->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)))
+            if ($caneditfield && ((empty($conf->multicompany->enabled) && $fuser->entity == $user->entity) || ! $user->entity || ($fuser->entity == $conf->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)))
             {
                 if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED))
                 {
@@ -1248,7 +1240,7 @@ else
                 }
             }
             elseif ($caneditpassword && ! $fuser->ldap_sid &&
-            (empty($conf->multicompany->enabled) || ! $user->entity || ($fuser->entity == $conf->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)))
+            ((empty($conf->multicompany->enabled) && $fuser->entity == $user->entity) || ! $user->entity || ($fuser->entity == $conf->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)))
             {
                 print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("EditPassword").'</a>';
             }
@@ -1261,7 +1253,7 @@ else
 	                print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("UserDisabled")).'">'.$langs->trans("ReinitPassword").'</a>';
 				}
                 elseif (($user->id != $id && $caneditpassword) && $fuser->login && !$fuser->ldap_sid &&
-                (empty($conf->multicompany->enabled) || ! $user->entity || ($fuser->entity == $conf->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)))
+                ((empty($conf->multicompany->enabled) && $fuser->entity == $user->entity) || ! $user->entity || ($fuser->entity == $conf->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)))
                 {
                     print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=password">'.$langs->trans("ReinitPassword").'</a>';
                 }
@@ -1271,7 +1263,7 @@ else
 	                print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("UserDisabled")).'">'.$langs->trans("SendNewPassword").'</a>';
 				}
                 else if (($user->id != $id && $caneditpassword) && $fuser->login && !$fuser->ldap_sid &&
-                (empty($conf->multicompany->enabled) || ! $user->entity || ($fuser->entity == $conf->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)))
+                ((empty($conf->multicompany->enabled) && $fuser->entity == $user->entity) || ! $user->entity || ($fuser->entity == $conf->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)))
                 {
                     if ($fuser->email) print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=passwordsend">'.$langs->trans("SendNewPassword").'</a>';
                     else print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans("SendNewPassword").'</a>';
@@ -1280,19 +1272,19 @@ else
 
             // Activer
             if ($user->id <> $id && $candisableuser && $fuser->statut == 0 &&
-            (empty($conf->multicompany->enabled) || ! $user->entity || ($fuser->entity == $conf->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)))
+            ((empty($conf->multicompany->enabled) && $fuser->entity == $user->entity) || ! $user->entity || ($fuser->entity == $conf->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)))
             {
                 print '<a class="butAction" href="fiche.php?id='.$fuser->id.'&amp;action=enable">'.$langs->trans("Reactivate").'</a>';
             }
             // Desactiver
             if ($user->id <> $id && $candisableuser && $fuser->statut == 1 &&
-            (empty($conf->multicompany->enabled) || ! $user->entity || ($fuser->entity == $conf->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)))
+            ((empty($conf->multicompany->enabled) && $fuser->entity == $user->entity) || ! $user->entity || ($fuser->entity == $conf->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)))
             {
                 print '<a class="butActionDelete" href="fiche.php?action=disable&amp;id='.$fuser->id.'">'.$langs->trans("DisableUser").'</a>';
             }
             // Delete
             if ($user->id <> $id && $candisableuser &&
-            (empty($conf->multicompany->enabled) || ! $user->entity || ($fuser->entity == $conf->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)))
+            ((empty($conf->multicompany->enabled) && $fuser->entity == $user->entity) || ! $user->entity || ($fuser->entity == $conf->entity) || ($conf->multicompany->transverse_mode && $conf->entity == 1)))
             {
                 print '<a class="butActionDelete" href="fiche.php?action=delete&amp;id='.$fuser->id.'">'.$langs->trans("DeleteUser").'</a>';
             }
@@ -1445,7 +1437,7 @@ else
             print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$fuser->id.'" method="POST" name="updateuser" enctype="multipart/form-data">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="update">';
-            print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
+            print '<input type="hidden" name="entity" value="'.$fuser->entity.'">';
             print '<table width="100%" class="border">';
 
             $rowspan=12;
