@@ -123,16 +123,16 @@ if (empty($reshook))
     if ($action == 'setaccountancy_code_buy')
     {
         $result = $object->setValueFrom('accountancy_code_buy', GETPOST('accountancy_code_buy'));
-        if ($result < 0)
-        	setEventMessage(join(',',$object->errors), 'errors');
+        if ($result < 0) setEventMessage(join(',',$object->errors), 'errors');
+        else $object->accountancy_code_buy=GETPOST('accountancy_code_buy');
         $action="";
     }
 
     if ($action == 'setaccountancy_code_sell')
     {
         $result = $object->setValueFrom('accountancy_code_sell', GETPOST('accountancy_code_sell'));
-        if ($result < 0)
-        	setEventMessage(join(',',$object->errors), 'errors');
+        if ($result < 0) setEventMessage(join(',',$object->errors), 'errors');
+        else $object->accountancy_code_sell=GETPOST('accountancy_code_sell');
         $action="";
     }
 
@@ -369,7 +369,7 @@ if (empty($reshook))
         {
             $result = $object->delete($object->id);
         }
-		 
+
         if ($result > 0)
         {
             header('Location: '.DOL_URL_ROOT.'/product/liste.php?delprod='.urlencode($object->ref));
@@ -684,7 +684,7 @@ else
         $tmpcode='';
 		if (! empty($modCodeProduct->code_auto))
 			$tmpcode=$modCodeProduct->getNextValue($object,$type);
-        print '<td class="fieldrequired" width="20%">'.$langs->trans("Ref").'</td><td><input name="ref" size="40" maxlength="32" value="'.$tmpcode.'">';
+        print '<td class="fieldrequired" width="20%">'.$langs->trans("Ref").'</td><td><input name="ref" size="40" maxlength="128" value="'.dol_escape_htmltag(GETPOST('ref')?GETPOST('ref'):$tmpcode).'">';
         if ($_error)
         {
             print $langs->trans("RefAlreadyExists");
@@ -692,7 +692,7 @@ else
         print '</td></tr>';
 
         // Label
-        print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="libelle" size="40" maxlength="255" value="'.GETPOST('libelle').'"></td></tr>';
+        print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="libelle" size="40" maxlength="255" value="'.dol_escape_htmltag(GETPOST('libelle')).'"></td></tr>';
 
         // On sell
         print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td>';
@@ -862,7 +862,7 @@ else
             print '<table class="border allwidth">';
 
             // Ref
-            print '<tr><td width="15%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" size="40" maxlength="32" value="'.$object->ref.'"></td></tr>';
+            print '<tr><td width="15%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" size="40" maxlength="128" value="'.$object->ref.'"></td></tr>';
 
             // Label
             print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="2"><input name="libelle" size="40" maxlength="255" value="'.$object->libelle.'"></td></tr>';

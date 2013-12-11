@@ -252,6 +252,8 @@ Seconds=Secondes
 Today=Aujourd'hui
 Yesterday=Hier
 Tomorrow=Demain
+Morning=Matin
+Afternoon=Après-midi
 Quadri=Trimestre
 MonthOfDay=Mois du jour
 HourShort=H
@@ -654,6 +656,7 @@ Deductible=Déductible
 from=de
 toward=vers
 Access=Accès
+SetDemandReason=Définir l'origine
 
 # Week day
 Monday=Lundi

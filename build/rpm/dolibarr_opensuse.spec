@@ -288,7 +288,11 @@ fi
 
 # Restart mysql
 echo Restart mysql
-/sbin/service mysql restart
+if [ -f /etc/init.d/mysqld ]; then
+    /etc/init.d/mysqld restart
+else
+	/sbin/service mysql restart
+fi
 
 # Show result
 echo
@@ -341,5 +345,5 @@ fi
 
 # version x.y.z-0.1.a for alpha, x.y.z-0.2.b for beta, x.y.z-0.3 for release
 %changelog
-* Sun Feb 17 2013 Laurent Destailleur 3.4.1-0.3
+* Sun Feb 17 2013 Laurent Destailleur 3.4.2-0.3
 - Initial version (#723326)

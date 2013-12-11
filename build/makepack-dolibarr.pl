@@ -10,7 +10,7 @@ use Cwd;
 $PROJECT="dolibarr";
 $MAJOR="3";
 $MINOR="4";
-$BUILD="1";		# Mettre x pour release, x-dev pour dev, x-beta pour beta, x-rc pour release candidate
+$BUILD="2";		# Mettre x pour release, x-dev pour dev, x-beta pour beta, x-rc pour release candidate
 $RPMSUBVERSION="auto";	# auto use value found into BUILD
 
 @LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","APS","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
@@ -59,6 +59,14 @@ $DIR||='.'; $DIR =~ s/([^\/\\])[\\\/]+$/$1/;
 
 $SOURCE="$DIR/..";
 $DESTI="$SOURCE/build";
+if (! $ENV{"DESTIBETARC"} || ! $ENV{"DESTISTABLE"})
+{
+    print "Error: Missing environment variables.\n";
+	print "You must define the environment variable DESTIBETARC and DESTISTABLE to point to the\ndirectories where you want to save the generated packages.\n";
+	print "$PROG.$Extension aborted.\n";
+    sleep 2;
+	exit 1;
+}
 
 # Detect OS type
 # --------------
@@ -66,7 +74,7 @@ if ("$^O" =~ /linux/i || (-d "/etc" && -d "/var" && "$^O" !~ /cygwin/i)) { $OS='
 elsif (-d "/etc" && -d "/Users") { $OS='macosx'; $CR=''; }
 elsif ("$^O" =~ /cygwin/i || "$^O" =~ /win32/i) { $OS='windows'; $CR="\r"; }
 if (! $OS) {
-    print "$PROG.$Extension was not able to detect your OS.\n";
+    print "Error: Can't detect your OS.\n";
 	print "Can't continue.\n";
 	print "$PROG.$Extension aborted.\n";
     sleep 2;
@@ -105,8 +113,8 @@ for (0..@ARGV-1) {
     	$FILENAMESNAPSHOT.="-".$PREFIX; 
     }
 }
-if ($ENV{"DESTIBETARC"} && $BUILD =~ /[a-z]/i)    { $DESTI = $ENV{"DESTIBETARC"}; }		# Force output dir if env DESTI is defined
-if ($ENV{"DESTISTABLE"}  && $BUILD =~ /^[0-9]+$/) { $DESTI = $ENV{"DESTISTABLE"}; }	# Force output dir if env DESTI is defined
+if ($ENV{"DESTIBETARC"} && $BUILD =~ /[a-z]/i)   { $DESTI = $ENV{"DESTIBETARC"}; }	# Force output dir if env DESTI is defined
+if ($ENV{"DESTISTABLE"} && $BUILD =~ /^[0-9]+$/) { $DESTI = $ENV{"DESTISTABLE"}; }	# Force output dir if env DESTI is defined
 
 
 print "Makepack version $VERSION\n";
@@ -483,11 +491,12 @@ if ($nboftargetok) {
             $newbuild =~ s/(dev|alpha)/0.1.a/gi;			# dev
             $newbuild =~ s/beta/0.2.beta1/gi;				# beta
             $newbuild =~ s/rc./0.3.rc1/gi;					# rc
-            if ($newbuild !~ /-/) { $newbuild.='-3'; }		# finale
+            if ($newbuild !~ /-/) { $newbuild.='-0.3'; }	# finale
             #$newbuild =~ s/(dev|alpha)/0/gi;				# dev
             #$newbuild =~ s/beta/1/gi;						# beta
             #$newbuild =~ s/rc./2/gi;						# rc
             #if ($newbuild !~ /-/) { $newbuild.='-3'; }		# finale
+            #print "newbuild=".$newbuild."\n";exit;
             $REL1 = $newbuild; $REL1 =~ s/-.*$//gi;
             if ($RPMSUBVERSION eq 'auto') { $RPMSUBVERSION = $newbuild; $RPMSUBVERSION =~ s/^.*-//gi; }
             print "Version is $MAJOR.$MINOR.$REL1-$RPMSUBVERSION\n";
