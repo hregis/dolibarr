@@ -1992,6 +1992,12 @@ else
             }
         }
 
+        if (is_object($hookmanager))
+        {
+        	$parameters=array();
+        	$reshook=$hookmanager->executeHooks('formAddSupplierObjectLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+        }
+
         print '</table>';
 
         print '</div>';

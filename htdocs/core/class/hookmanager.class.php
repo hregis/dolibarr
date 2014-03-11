@@ -144,7 +144,7 @@ class HookManager
                 foreach($modules as $module => $actionclassinstance)
                 {
                 	//print "Before hook ".get_class($actionclassinstance)." method=".$method." results=".count($actionclassinstance->results)." resprints=".count($actionclassinstance->resprints)." result=".$result." resaction=".$resaction."<br>\n";
-                	 
+
                 	//print 'class='.get_class($actionclassinstance).' method='.$method.' action='.$action;
                 	// jump to next class if method does not exists
                     if (! method_exists($actionclassinstance,$method)) continue;

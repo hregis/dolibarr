@@ -673,7 +673,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		{
 			if (file_exists($file_name_osencoded))
 			{
-				dol_syslog("Files.lib::dol_move_uploaded_file File ".$file_name." already exists. Return 'ErrorFileAlreadyExists'", LOG_WARNING);
+				dol_syslog("Files.lib::dol_move_uploaded_file File ".$file_name." already exists. Return 'ErrorFileAlreadyExists' reshook=".$reshook, LOG_WARNING);
 				return 'ErrorFileAlreadyExists';
 			}
 		}
