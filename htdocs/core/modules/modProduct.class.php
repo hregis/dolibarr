@@ -380,6 +380,7 @@ class modProduct extends DolibarrModules
 	        'p.ref' => "Ref*",
             'p.label' => "Label*",
 			'p.fk_product_type' => "Type*",
+			'p.entity' => "Entity",
 			'p.tosell' => "OnSell*",
 			'p.tobuy' => "OnBuy*",
 			'p.description' => "Description",
@@ -521,6 +522,7 @@ class modProduct extends DolibarrModules
             'p.ref' => "PREF123456",
             'p.datec' => dol_print_date(dol_now(), '%Y-%m-%d'),
             'p.label' => "Product name in default language",
+			'p.entity' => "(if multicompany module activated you must have a value here; corresponding to entity id ! else you can let it empty",
             'p.description' => "Product description in default language",
             'p.note_public' => "a public note (free text)",
             'p.note' => "a private note (free text)",
@@ -589,7 +591,7 @@ class modProduct extends DolibarrModules
 			));
 		}
 		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
-        $this->import_updatekeys_array[$r] = array('p.ref'=>'Ref');
+        $this->import_updatekeys_array[$r] = array('p.ref'=>'Ref','p.entity'=>'Entity');
         if (!empty($conf->barcode->enabled)) $this->import_updatekeys_array[$r] = array_merge($this->import_updatekeys_array[$r], array('p.barcode'=>'BarCode')); //only show/allow barcode as update key if Barcode module enabled
 
 		if (!empty($conf->fournisseur->enabled))
