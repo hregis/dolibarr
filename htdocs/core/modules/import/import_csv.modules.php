@@ -327,7 +327,8 @@ class ImportCsv extends ModeleImports
 
 		// prepare the object to be handled with entity (mono / multi )
 		// test if entity exist in fields list we want to set at default entity 1 else let it go as configured
-		if ($objimport['array_import_code'][0] == 'produit_1'){
+
+		if ($objimport->array_import_code[0] == 'produit_1'){
 			$keyEntity = -1;
 			foreach ($array_match_file_to_database as $key => $value){
 				if ($value == "p.entity"){

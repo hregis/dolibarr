@@ -146,7 +146,6 @@ $objimport = new Import($db);
 $objimport->load_arrays($user, ($step == 1 ? '' : $datatoimport));
 
 $objmodelimport = new ModeleImports();
-
 $form = new Form($db);
 $htmlother = new FormOther($db);
 $formfile = new FormFile($db);
@@ -155,6 +154,7 @@ $formfile = new FormFile($db);
 $serialized_array_match_file_to_database = isset($_SESSION["dol_array_match_file_to_database"]) ? $_SESSION["dol_array_match_file_to_database"] : '';
 $array_match_file_to_database = array();
 $fieldsarray = explode(',', $serialized_array_match_file_to_database);
+
 foreach ($fieldsarray as $elem)
 {
 	$tabelem = explode('=', $elem, 2);
@@ -354,7 +354,7 @@ if ($action == 'saveorder')
 				continue;
 			}
 			// We found the key of targets that is at position pos
-			$namefield = $key;
+			$namefield = $key;$activation = false;
 			//dol_syslog('AjaxImport Field name found for file field nb '.$fieldnb.'='.$namefield);
 
 			break;
@@ -1266,6 +1266,23 @@ if ($step == 4 && $datatoimport)
 }
 
 
+
+
+$activation = true;
+
+if ($datatoimport == 'produit_1'){
+	$nbKeys = count($updatekeys);
+	$activation = false;
+	if ($nbKeys == 1  && in_array("p.ref", $updatekeys)){
+		$activation = true;
+	}
+	if ($nbKeys > 1 ){
+		$activation = true;
+	}
+}
+
+
+
 // STEP 5: Summary of choices and launch simulation
 if ($step == 5 && $datatoimport)
 {
@@ -1450,6 +1467,7 @@ if ($step == 5 && $datatoimport)
 			print '<span class="opacitymedium">'.$langs->trans("UpdateNotYetSupportedForThisImport").'</span>';
 		}
 	}
+
 	/*echo '<pre>';
 	print_r($objimport->array_import_updatekeys);
 	echo '</pre>';*/
@@ -1543,6 +1561,7 @@ if ($step == 5 && $datatoimport)
         print '<div class="center">';
         if ($user->rights->import->run)
         {
+
             print '<input type="submit" class="butAction" value="'.$langs->trans("RunSimulateImportFile").'">';
         }
         else
@@ -1699,7 +1718,7 @@ if ($step == 5 && $datatoimport)
         print '<div class="center">';
         if ($user->rights->import->run)
         {
-            if (empty($nboferrors))
+            if (empty($nboferrors) && $activation)
             {
                 print '<a class="butAction" href="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import&step=6&importid='.$importid.$param.'">'.$langs->trans("RunImportFile").'</a>';
             }
@@ -2032,7 +2051,11 @@ print '<br>';
 // End of page
 llxFooter();
 $db->close();
+?>
 
+
+
+<?php
 
 /**
  * Function to put the movable box of a source field
