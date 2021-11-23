@@ -1266,23 +1266,6 @@ if ($step == 4 && $datatoimport)
 }
 
 
-
-
-$activation = true;
-
-if ($datatoimport == 'produit_1'){
-	$nbKeys = count($updatekeys);
-	$activation = false;
-	if ($nbKeys == 1  && in_array("p.ref", $updatekeys)){
-		$activation = true;
-	}
-	if ($nbKeys > 1 ){
-		$activation = true;
-	}
-}
-
-
-
 // STEP 5: Summary of choices and launch simulation
 if ($step == 5 && $datatoimport)
 {
@@ -1718,7 +1701,7 @@ if ($step == 5 && $datatoimport)
         print '<div class="center">';
         if ($user->rights->import->run)
         {
-            if (empty($nboferrors) && $activation)
+            if (empty($nboferrors))
             {
                 print '<a class="butAction" href="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import&step=6&importid='.$importid.$param.'">'.$langs->trans("RunImportFile").'</a>';
             }

@@ -359,7 +359,19 @@ class ImportXlsx extends ModeleImports
 		$this->warnings = array();
 
 		//dol_syslog("import_csv.modules maxfields=".$maxfields." importid=".$importid);
-
+		if ($objimport->array_import_code[0] == 'produit_1'){
+			$keyEntity = -1;
+			foreach ($array_match_file_to_database as $key => $value){
+				if ($value == "p.entity"){
+					$keyEntity =  $key-1;
+					break;
+				}
+			}
+			if (empty($arrayrecord[$keyEntity]['val'])){
+				$arrayrecord[$keyEntity]['val'] = $conf->entity;
+				$arrayrecord[$keyEntity]['type'] = 1;
+			}
+		}
 		//var_dump($array_match_file_to_database);
 		//var_dump($arrayrecord);
 		$array_match_database_to_file = array_flip($array_match_file_to_database);
@@ -910,7 +922,7 @@ class ImportXlsx extends ModeleImports
 							// Build SQL INSERT request
 							$sqlstart = 'INSERT INTO '.$tablename.'('.implode(', ', $listfields).', import_key';
 							$sqlend = ') VALUES('.implode(', ', $listvalues).", '".$importid."'";
-							if (!empty($tablewithentity_cache[$tablename])) {
+							if (!empty($tablewithentity_cache[$tablename]) && $keyEntity < 0) {
 								$sqlstart .= ', entity';
 								$sqlend .= ', '.$conf->entity;
 							}

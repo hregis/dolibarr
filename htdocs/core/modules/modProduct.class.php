@@ -522,7 +522,7 @@ class modProduct extends DolibarrModules
             'p.ref' => "PREF123456",
             'p.datec' => dol_print_date(dol_now(), '%Y-%m-%d'),
             'p.label' => "Product name in default language",
-			'p.entity' => "(if multicompany module activated you must have a value here; corresponding to entity id ! else you can let it empty",
+			'p.entity' => "(empty if you want to add product to active entity or int",
             'p.description' => "Product description in default language",
             'p.note_public' => "a public note (free text)",
             'p.note' => "a private note (free text)",

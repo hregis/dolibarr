@@ -336,11 +336,12 @@ class ImportCsv extends ModeleImports
 					break;
 				}
 			}
-			if ($keyEntity >= 0 ){
+			if (empty($arrayrecord[$keyEntity]['val'])){
 				$arrayrecord[$keyEntity]['val'] = $conf->entity;
 				$arrayrecord[$keyEntity]['type'] = 1;
 			}
 		}
+
 		$error = 0;
 		$warning = 0;
 		$this->errors = array();
@@ -904,10 +905,12 @@ class ImportCsv extends ModeleImports
 							// Build SQL INSERT request
 							$sqlstart = 'INSERT INTO '.$tablename.'('.implode(', ', $listfields).', import_key';
 							$sqlend = ') VALUES('.implode(', ', $listvalues).", '".$importid."'";
-							if (!empty($tablewithentity_cache[$tablename])) {
+
+							if (!empty($tablewithentity_cache[$tablename]) && $keyEntity < 0 ) {
 								$sqlstart .= ', entity';
 								$sqlend .= ', '.$conf->entity;
 							}
+
 							if (!empty($objimport->array_import_tables_creator[0][$alias])) {
 								$sqlstart .= ', '.$objimport->array_import_tables_creator[0][$alias];
 								$sqlend .= ', '.$user->id;
