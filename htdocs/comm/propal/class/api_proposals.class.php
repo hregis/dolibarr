@@ -279,8 +279,9 @@ class Proposals extends DolibarrApi
 	 *
 	 * @return int
 	 */
-	public function getLines($id)
+	public function getLines($id, $sqlfilters = '')
 	{
+		$filters = "";
 		if (!DolibarrApiAccess::$user->rights->propal->lire) {
 			throw new RestException(401);
 		}
@@ -293,7 +294,18 @@ class Proposals extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-		$this->propal->getLinesArray();
+
+		if (!empty($sqlfilters))
+		{
+			if (!DolibarrApi::_checkFilters($sqlfilters))
+			{
+				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			}
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$filters = " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+		}
+
+		$this->propal->getLinesArray($filters);
 		$result = array();
 		foreach ($this->propal->lines as $line) {
 			array_push($result, $this->_cleanObjectDatas($line));

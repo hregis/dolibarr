@@ -1712,7 +1712,7 @@ class Propal extends CommonObject
 	 *
 	 * @return		int						<0 if KO, >0 if OK
 	 */
-	public function fetch_lines($only_product = 0, $loadalsotranslation = 0)
+	public function fetch_lines($only_product = 0, $loadalsotranslation = 0, $sqlfilters = '')
 	{
 		global $langs, $conf;
 		// phpcs:enable
@@ -1730,6 +1730,9 @@ class Propal extends CommonObject
 		$sql .= ' WHERE d.fk_propal = '.$this->id;
 		if ($only_product) {
 			$sql .= ' AND p.fk_product_type = 0';
+		}
+		if ($sqlfilters) {
+			$sql .= $sqlfilters;
 		}
 		$sql .= ' ORDER by d.rang';
 
@@ -3686,9 +3689,9 @@ class Propal extends CommonObject
 	 *
 	 * 	@return int		>0 if OK, <0 if KO
 	 */
-	public function getLinesArray()
+	public function getLinesArray($sqlfilters = '')
 	{
-		return $this->fetch_lines();
+		return $this->fetch_lines(0, 0, $sqlfilters);
 	}
 
 	/**
