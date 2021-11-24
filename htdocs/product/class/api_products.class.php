@@ -239,7 +239,9 @@ class Products extends DolibarrApi
      */
     public function post($request_data = null)
     {
-        if (!DolibarrApiAccess::$user->rights->produit->creer) {
+        global $db;
+
+		if (!DolibarrApiAccess::$user->rights->produit->creer) {
             throw new RestException(401);
         }
         // Check mandatory fields
@@ -248,6 +250,15 @@ class Products extends DolibarrApi
         foreach ($request_data as $field => $value) {
             $this->product->$field = $value;
         }
+
+		if ($this->product->entity != ""){
+			$soc = new Societe($db);
+			$res = $soc->fetch($this->product->entity);
+			if ($res <= 0 ){
+				throw new RestException(500, "Error Entity does not exist ");
+			}
+		}
+
         if ($this->product->create(DolibarrApiAccess::$user) < 0) {
             throw new RestException(500, "Error creating product", array_merge(array($this->product->error), $this->product->errors));
         }
