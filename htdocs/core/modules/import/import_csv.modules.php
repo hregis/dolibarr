@@ -321,14 +321,22 @@ class ImportCsv extends ModeleImports
     public function import_insert($arrayrecord, $array_match_file_to_database, $objimport, $maxfields, $importid, $updatekeys)
 	{
         // phpcs:enable
-		global $langs, $conf, $user;
+		global $langs, $conf, $user,$db;
         global $thirdparty_static; // Specific to thirdparty import
 		global $tablewithentity_cache; // Cache to avoid to call  desc at each rows on tables
 
 		// prepare the object to be handled with entity (mono / multi )
 		// test if entity exist in fields list we want to set at default entity 1 else let it go as configured
-
+		$error = 0;
+		$warning = 0;
+		$this->errors = array();
+		$this->warnings = array();
 		if ($objimport->array_import_code[0] == 'produit_1'){
+
+
+
+
+
 			$keyEntity = -1;
 			foreach ($array_match_file_to_database as $key => $value){
 				if ($value == "p.entity"){
@@ -339,13 +347,27 @@ class ImportCsv extends ModeleImports
 			if (empty($arrayrecord[$keyEntity]['val'])){
 				$arrayrecord[$keyEntity]['val'] = $conf->entity;
 				$arrayrecord[$keyEntity]['type'] = 1;
+
+			}else{
+
+				require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+				$id  = $arrayrecord[$keyEntity]['val'];
+				$soc = new Societe($db);
+				$res = $soc->fetch($id);
+
+				// if not an entity we force to conf->entity
+				if ($res <= 0 ){
+					$error++;
+					$langs->load("exports");
+					$this->warnings[$warning]['lib'] = $langs->trans('NotAnEntity',$id);
+					$this->warnings[$warning]['type'] = 'NOENTITY';
+					$this->errors[$error]['lib'] = $langs->trans('NotAnEntity', $id);
+					$this->errors[$error]['type'] = 'NOENTITY';
+				}
 			}
 		}
 
-		$error = 0;
-		$warning = 0;
-		$this->errors = array();
-		$this->warnings = array();
+
 
 		//dol_syslog("import_csv.modules maxfields=".$maxfields." importid=".$importid);
 
