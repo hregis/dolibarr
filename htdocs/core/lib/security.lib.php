@@ -495,6 +495,8 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 			{
 					$sql .= " WHERE dbt." . $dbt_select . " IN (" . $objectid . ")";
 					$sql .= " AND dbt.entity IN (" . getEntity($sharedelement, 1) . ")";
+
+
 			}
 		}
 		elseif (in_array($feature, $checksoc))	// We check feature = checksoc
