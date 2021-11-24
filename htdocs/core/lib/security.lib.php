@@ -468,7 +468,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 		{
 			$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-			if (($feature == 'user' || $feature == 'usergroup') && !empty($conf->multicompany->enabled))
+			if (!empty($conf->multicompany->enabled))
 			{
 				if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
 				{
@@ -493,8 +493,8 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 			}
 			else
 			{
-				$sql .= " WHERE dbt.".$dbt_select." IN (".$objectid.")";
-				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
+					$sql .= " WHERE dbt." . $dbt_select . " IN (" . $objectid . ")";
+					$sql .= " AND dbt.entity IN (" . getEntity($sharedelement, 1) . ")";
 			}
 		}
 		elseif (in_array($feature, $checksoc))	// We check feature = checksoc
