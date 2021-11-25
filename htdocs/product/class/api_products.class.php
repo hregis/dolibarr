@@ -259,8 +259,6 @@ class Products extends DolibarrApi
 				if ($res <= 0 ){
 					throw new RestException(500, "Error Entity does not exist ");
 				}
-			}else{
-				$this->product->entity ="" ;// will be setted to $conf->entity later on
 			}
 		}
 
