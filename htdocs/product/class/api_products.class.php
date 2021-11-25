@@ -254,8 +254,8 @@ class Products extends DolibarrApi
 		if ($this->product->entity != ""){
 			if ($conf->multicompany->enabled){
 				dol_include_once('/multicompany/class/dad_multicompany.class.php');
-				$soc = new DaoMulticompany($db);
-				$res = $soc->fetch($this->product->entity);
+				$ent = new DaoMulticompany($db);
+				$res = $ent->fetch($this->product->entity);
 				if ($res <= 0 ){
 					throw new RestException(500, "Error Entity does not exist ");
 				}
