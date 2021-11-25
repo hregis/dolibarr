@@ -305,7 +305,11 @@ class Proposals extends DolibarrApi
 			$filters = " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
-		$this->propal->getLinesArray($filters);
+		$resLines = $this->propal->getLinesArray($filters);
+		if ($resLines < 0)
+		{
+			throw new RestException(503, 'Syntax error with parameter sqlfilters '.$sqlfilters);
+		}
 		$result = array();
 		foreach ($this->propal->lines as $line) {
 			array_push($result, $this->_cleanObjectDatas($line));
