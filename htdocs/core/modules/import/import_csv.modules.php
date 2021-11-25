@@ -331,11 +331,9 @@ class ImportCsv extends ModeleImports
 		$warning = 0;
 		$this->errors = array();
 		$this->warnings = array();
+
+		/** ************************** SPECIFIQUE EUROCHEF  */
 		if ($objimport->array_import_code[0] == 'produit_1'){
-
-
-
-
 
 			$keyEntity = -1;
 			foreach ($array_match_file_to_database as $key => $value){
@@ -349,24 +347,26 @@ class ImportCsv extends ModeleImports
 				$arrayrecord[$keyEntity]['type'] = 1;
 
 			}else{
+				if ($conf->multicompany->enabled){
+					dol_include_once('/multicompany/class/dad_multicompany.class.php');
+					$soc = new DaoMulticompany($db);
+					$id  = $arrayrecord[$keyEntity]['val'];
+					$res = $soc->fetch($id);
 
-				require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-				$id  = $arrayrecord[$keyEntity]['val'];
-				$soc = new Societe($db);
-				$res = $soc->fetch($id);
+					if ($res <= 0 ){
+								$error++;
+								$langs->load("exports");
+								$this->errors[$error]['lib'] = $langs->trans('NotAnEntity', $id);
+								$this->errors[$error]['type'] = 'NOENTITY';
+					}
 
-				// if not an entity we force to conf->entity
-				if ($res <= 0 ){
-					$error++;
-					$langs->load("exports");
-					$this->warnings[$warning]['lib'] = $langs->trans('NotAnEntity',$id);
-					$this->warnings[$warning]['type'] = 'NOENTITY';
-					$this->errors[$error]['lib'] = $langs->trans('NotAnEntity', $id);
-					$this->errors[$error]['type'] = 'NOENTITY';
+				}else { // if not we force to conf->entity
+					$arrayrecord[$keyEntity]['val'] = $conf->entity;
+					$arrayrecord[$keyEntity]['type'] = 1;
 				}
 			}
 		}
-
+		/** FIN ************************** SPECIFIQUE EUROCHEF  */
 
 
 		//dol_syslog("import_csv.modules maxfields=".$maxfields." importid=".$importid);

@@ -239,7 +239,7 @@ class Products extends DolibarrApi
      */
     public function post($request_data = null)
     {
-        global $db;
+        global $conf, $db;
 
 		if (!DolibarrApiAccess::$user->rights->produit->creer) {
             throw new RestException(401);
@@ -252,10 +252,15 @@ class Products extends DolibarrApi
         }
 
 		if ($this->product->entity != ""){
-			$soc = new Societe($db);
-			$res = $soc->fetch($this->product->entity);
-			if ($res <= 0 ){
-				throw new RestException(500, "Error Entity does not exist ");
+			if ($conf->multicompany->enabled){
+				dol_include_once('/multicompany/class/dad_multicompany.class.php');
+				$soc = new DaoMulticompany($db);
+				$res = $soc->fetch($this->product->entity);
+				if ($res <= 0 ){
+					throw new RestException(500, "Error Entity does not exist ");
+				}
+			}else{
+				$this->product->entity ="" ;// will be setted to $conf->entity later on
 			}
 		}
 
