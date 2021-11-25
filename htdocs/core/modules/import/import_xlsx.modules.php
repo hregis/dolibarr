@@ -375,9 +375,9 @@ class ImportXlsx extends ModeleImports
 			}else{
 				if ($conf->multicompany->enabled){
 					dol_include_once('/multicompany/class/dad_multicompany.class.php');
-					$soc = new DaoMulticompany($db);
+					$ent = new DaoMulticompany($db);
 					$id  = $arrayrecord[$keyEntity]['val'];
-					$res = $soc->fetch($id);
+					$res = $ent->fetch($id);
 
 					if ($res <= 0 ){
 						$error++;
