@@ -2034,12 +2034,6 @@ print '<br>';
 // End of page
 llxFooter();
 $db->close();
-?>
-
-
-
-<?php
-
 /**
  * Function to put the movable box of a source field
  *
