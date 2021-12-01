@@ -720,7 +720,7 @@ class modProduct extends DolibarrModules
 				'pr.fk_product_fils'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/class/product.class.php', 'class'=>'Product', 'method'=>'fetch', 'element'=>'Product')
 			);
 			$this->import_examplevalues_array[$r] = array('pr.fk_product_pere'=>"PRODUCT_REF or id:123456", 'pr.fk_product_fils'=>"PRODUCT_REF or id:123456", 'pr.qty'=>"100", 'pr.incdec'=>"1=Increase/Decrease stock on parent change, 0=No action on child stock");
-			$this->import_updatekeys_array[$r] = array('l.fk_product_pere'=>'OneParentProducts', 'l.fk_product_fils'=>'OneComposedProduct');
+			$this->import_updatekeys_array[$r] = array('l.fk_product_pere'=>'ParentProduct', 'l.fk_product_fils'=>'OneComposedProduct');
 		}
 
 		if (!empty($conf->global->MAIN_MULTILANGS))
