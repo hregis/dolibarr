@@ -286,6 +286,7 @@ PriceNumeric=Nombre
 DefaultPrice=Prix par défaut
 ComposedProductIncDecStock=Augmenter/Réduire le stock sur changement du stock du père
 ComposedProduct=Produits fils
+OneComposedProduct=Produit fils
 MinSupplierPrice=Prix d'achat minimum
 MinCustomerPrice=Prix de vente minimum
 DynamicPriceConfiguration=Configuration du prix dynamique
