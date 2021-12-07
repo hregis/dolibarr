@@ -109,6 +109,16 @@ if ($action == 'updateMask') {
 		$error++;
 	}
 
+	$notification_email = GETPOST('TICKET_ASSIGN_NOTIFICATION_EMAIL_FROM', 'alpha');
+	if (!empty($notification_email)) {
+		$res = dolibarr_set_const($db, 'TICKET_ASSIGN_NOTIFICATION_EMAIL_FROM', $notification_email, 'chaine', 0, '', $conf->entity);
+	} else {
+		$res = dolibarr_set_const($db, 'TICKET_ASSIGN_NOTIFICATION_EMAIL_FROM', '', 'chaine', 0, '', $conf->entity);
+	}
+	if (!$res > 0) {
+		$error++;
+	}
+
 	// altairis : differentiate notification email FROM and TO
 	$notification_email_to = GETPOST('TICKET_NOTIFICATION_EMAIL_TO', 'alpha');
 	if (!empty($notification_email_to)) {
@@ -130,6 +140,16 @@ if ($action == 'updateMask') {
 		$error++;
 	}
 
+	$mail_intro = GETPOST('TICKET_MESSAGE_ASSIGN_MAIL_INTRO', 'restricthtml');
+	if (!empty($mail_intro)) {
+		$res = dolibarr_set_const($db, 'TICKET_MESSAGE_ASSIGN_MAIL_INTRO', $mail_intro, 'chaine', 0, '', $conf->entity);
+	} else {
+		$res = dolibarr_set_const($db, 'TICKET_MESSAGE_ASSIGN_MAIL_INTRO', $langs->transnoentities('TicketAssignedToYou'), 'chaine', 0, '', $conf->entity);
+	}
+	if (!$res > 0) {
+		$error++;
+	}
+
 	$mail_signature = GETPOST('TICKET_MESSAGE_MAIL_SIGNATURE', 'restricthtml');
 	if (!empty($mail_signature)) {
 		$res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_SIGNATURE', $mail_signature, 'chaine', 0, '', $conf->entity);
@@ -137,6 +157,16 @@ if ($action == 'updateMask') {
 		$res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_SIGNATURE', $langs->trans('TicketMessageMailSignatureText'), 'chaine', 0, '', $conf->entity);
 	}
 	if (!($res > 0)) {
+		$error++;
+	}
+
+	$mail_signature = GETPOST('TICKET_MESSAGE_ASSIGN_MAIL_SIGNATURE', 'restricthtml');
+	if (!empty($mail_signature)) {
+		$res = dolibarr_set_const($db, 'TICKET_MESSAGE_ASSIGN_MAIL_SIGNATURE', $mail_signature, 'chaine', 0, '', $conf->entity);
+	} else {
+		$res = dolibarr_set_const($db, 'TICKET_MESSAGE_ASSIGN_MAIL_SIGNATURE', $langs->trans('TicketMessageMailSignatureText'), 'chaine', 0, '', $conf->entity);
+	}
+	if (!$res > 0) {
 		$error++;
 	}
 }
@@ -181,6 +211,12 @@ if ($action == 'setvarother') {
 	if (!($res > 0)) {
 		$error++;
 	}
+
+	$param_auto_assign = GETPOST('TICKET_MAIL_ALERT_ON_ASSIGN_USER', 'alpha');
+	$res = dolibarr_set_const($db, 'TICKET_MAIL_ALERT_ON_ASSIGN_USER', $param_auto_assign, 'chaine', 0, '', $conf->entity);
+	if (!$res > 0) {
+		$error++;
+	}
 }
 
 
@@ -198,7 +234,7 @@ $page_name = "TicketSetup";
 llxHeader('', $langs->trans($page_name), $help_url);
 
 // Subheader
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/moduleTicketAssignedEmailBodys.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 
 print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
@@ -576,6 +612,54 @@ $doleditor->Create();
 print '</td>';
 print '<td class="center">';
 print $form->textwithpicto('', $langs->trans("TicketMessageMailSignatureHelpAdmin"), 1, 'help');
+print '</td></tr>';
+
+// Activate mail notification for ticket assignment
+print '<tr class="oddeven"><td>'.$langs->trans("TicketsMailAlertAssignTicket").'</td>';
+print '<td class="left">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('TICKET_MAIL_ALERT_ON_ASSIGN_USER');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("TICKET_MAIL_ALERT_ON_ASSIGN_USER", $arrval, $conf->global->TICKET_MAIL_ALERT_ON_ASSIGN_USER);
+}
+print '</td>';
+print '<td class="center">';
+print $form->textwithpicto('', $langs->trans("TicketsMailAlertAssignTicketHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+// Email for notification of TICKET_ASSIGN
+print '<tr class="oddeven"><td>'.$langs->trans("TicketEmailAssignNotificationFrom").' ('.$langs->trans("Assignment").')</td>';
+print '<td class="left">';
+print '<input type="text" name="TICKET_ASSIGN_NOTIFICATION_EMAIL_FROM" value="'.(!empty($conf->global->TICKET_ASSIGN_NOTIFICATION_EMAIL_FROM) ? $conf->global->TICKET_ASSIGN_NOTIFICATION_EMAIL_FROM : '').'"></td>';
+print '<td class="center">';
+print $form->textwithpicto('', $langs->trans("TicketEmailAssignNotificationFromHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+// Text intro for assignment notify
+$mail_intro = $conf->global->TICKET_MESSAGE_ASSIGN_MAIL_INTRO ? $conf->global->TICKET_MESSAGE_ASSIGN_MAIL_INTRO : $langs->trans('TicketMessageMailIntroText');
+print '<tr class="oddeven"><td>'.$langs->trans("TicketMessageMailIntroLabelAdmin").' ('.$langs->trans("Assignment").')';
+print '</td><td>';
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+$doleditor = new DolEditor('TICKET_MESSAGE_ASSIGN_MAIL_INTRO', $mail_intro, '100%', 120, 'dolibarr_mailings', '', false, true, $conf->global->FCKEDITOR_ENABLE_MAIL, ROWS_2, 70);
+$doleditor->Create();
+print '</td>';
+print '<td class="center">';
+print $form->textwithpicto('', $langs->trans("TicketMessageAssignmentMailIntroHelpAdmin"), 1, 'help');
+print '</td></tr>';
+
+// Texte end for assignment notify
+$mail_signature = $conf->global->TICKET_MESSAGE_ASSIGN_MAIL_SIGNATURE ? $conf->global->TICKET_MESSAGE_ASSIGN_MAIL_SIGNATURE : $langs->trans('TicketMessageMailSignatureText');
+print '<tr class="oddeven"><td>'.$langs->trans("TicketMessageAssignmentMailSignatureLabelAdmin").'</label>';
+print '</td><td>';
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+$doleditor = new DolEditor('TICKET_MESSAGE_ASSIGN_MAIL_SIGNATURE', $mail_signature, '100%', 120, 'dolibarr_mailings', '', false, true, $conf->global->FCKEDITOR_ENABLE_MAIL, ROWS_2, 70);
+$doleditor->Create();
+print '</td>';
+print '<td class="center">';
+print $form->textwithpicto('', $langs->trans("TicketMessageAssignmentMailSignatureHelpAdmin"), 1, 'help');
 print '</td></tr>';
 
 print '</table>';
