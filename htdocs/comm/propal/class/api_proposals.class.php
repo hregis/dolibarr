@@ -273,7 +273,8 @@ class Proposals extends DolibarrApi
 	/**
 	 * Get lines of a commercial proposal
 	 *
-	 * @param int   $id             Id of commercial proposal
+	 * @param int		$id             Id of commercial proposal
+	 * @param string    $sqlfilters		Other criteria to filter answers. Syntax example "(d.fk_product = 5) and (p.fk_product_type = 0) => d is the alias for lines table, p is the alias for product table"
 	 *
 	 * @url	GET {id}/lines
 	 *
