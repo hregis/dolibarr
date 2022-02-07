@@ -787,8 +787,8 @@ class ImportCsv extends ModeleImports
 				if (!$errorforthistable) {
 					//print "$alias/$tablename/$listfields/$listvalues<br>";
 					if (!empty($listfields)) {
-						$updatedone = false;
-						$insertdone = false;
+//						$updatedone = false;
+//						$insertdone = false;
 
 						if (!empty($updatekeys)) {
 							// We do SELECT to get the rowid, if we already have the rowid, it's to be used below for related tables (extrafields)
