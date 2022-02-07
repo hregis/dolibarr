@@ -711,7 +711,12 @@ class Product extends CommonObject
 					$sql .= ", fk_unit";
 					$sql .= ") VALUES (";
 					$sql .= "'".$this->db->idate($now)."'";
-					$sql .= ", ".$conf->entity;
+					if (empty($this->entity)){
+						$sql .= ", " . $conf->entity;
+					}else{
+						$sql .= ", ". $this->entity ;
+					}
+
 					$sql .= ", '".$this->db->escape($this->ref)."'";
 					$sql .= ", ".(!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null");
 					$sql .= ", ".price2num($price_min_ht);
