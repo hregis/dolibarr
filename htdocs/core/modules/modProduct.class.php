@@ -895,6 +895,25 @@ class modProduct extends DolibarrModules
 				'pr.date_price'=>'2020-12-31');
 		}
 
+		if (!empty($conf->global->PRODUIT_SOUSPRODUITS))
+		{
+			// Imports virtual products
+			$r++;
+			$this->import_code[$r] = $this->rights_class.'_sousproduits';
+			$this->import_label[$r] = "AssociatedProducts"; // Translation key
+			$this->import_icon[$r] = $this->picto;
+			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
+			$this->import_tables_array[$r] = array('pr'=>MAIN_DB_PREFIX.'product_association');
+			$this->import_fields_array[$r] = array('pr.fk_product_pere'=>"ParentProduct", 'pr.fk_product_fils'=>"ComposedProduct", 'pr.qty'=>"Qty", 'pr.incdec'=>'ComposedProductIncDecStock');
+			$this->import_regex_array[$r] = array('s.incdec' => '^[0|1]');
+			$this->import_convertvalue_array[$r] = array(
+				'pr.fk_product_pere'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/class/product.class.php', 'class'=>'Product', 'method'=>'fetch', 'element'=>'Product'),
+				'pr.fk_product_fils'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/class/product.class.php', 'class'=>'Product', 'method'=>'fetch', 'element'=>'Product')
+			);
+			$this->import_examplevalues_array[$r] = array('pr.fk_product_pere'=>"PRODUCT_REF or id:123456", 'pr.fk_product_fils'=>"PRODUCT_REF or id:123456", 'pr.qty'=>"100", 'pr.incdec'=>"1=Increase/Decrease stock on parent change, 0=No action on child stock");
+			$this->import_updatekeys_array[$r] = array('l.fk_product_pere'=>'ParentProduct', 'l.fk_product_fils'=>'OneComposedProduct');
+		}
+
 		if (!empty($conf->global->MAIN_MULTILANGS)) {
 			// Import translations of product names and descriptions
 			$r++;
