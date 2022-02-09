@@ -1141,3 +1141,4 @@ Forthcoming=Forthcoming
 Currently=Currently
 ClientTZ=Client Time Zone (user)
 NotClosedYet=Not yet closed
+AddLineOnPosition=Add line on position (at the end if empty)
