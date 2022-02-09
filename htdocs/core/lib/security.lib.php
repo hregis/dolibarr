@@ -634,7 +634,7 @@ function checkUserAccessToObject($user, array $featuresarray, $objectid = 0, $ta
 		if (in_array($feature, $check)) {
 			$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-			if (($feature == 'user' || $feature == 'usergroup') && !empty($conf->multicompany->enabled)) {	// Special for multicompany
+			if (!empty($conf->multicompany->enabled)) {	// Special for multicompany
 				if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 					if ($conf->entity == 1 && $user->admin && !$user->entity) {
 						$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";

@@ -355,7 +355,7 @@ class ImportXlsx extends ModeleImports
 	public function import_insert($arrayrecord, $array_match_file_to_database, $objimport, $maxfields, $importid, $updatekeys)
 	{
 		// phpcs:enable
-		global $langs, $conf, $user;
+		global $langs, $conf, $user,$db;
 		global $thirdparty_static; // Specific to thirdparty import
 		global $tablewithentity_cache; // Cache to avoid to call  desc at each rows on tables
 
@@ -365,6 +365,40 @@ class ImportXlsx extends ModeleImports
 		$this->warnings = array();
 
 		//dol_syslog("import_csv.modules maxfields=".$maxfields." importid=".$importid);
+		/** ************************** SPECIFIQUE EUROCHEF  */
+		if ($objimport->array_import_code[0] == 'produit_1'){
+			$keyEntity = -1;
+			foreach ($array_match_file_to_database as $key => $value){
+				if ($value == "p.entity"){
+					$keyEntity =  $key-1;
+					break;
+				}
+			}
+			if (empty($arrayrecord[$keyEntity]['val'])){
+				$arrayrecord[$keyEntity]['val'] = $conf->entity;
+				$arrayrecord[$keyEntity]['type'] = 1;
+
+			}else{
+				if ($conf->multicompany->enabled){
+					dol_include_once('/multicompany/class/dad_multicompany.class.php');
+					$ent = new DaoMulticompany($db);
+					$id  = $arrayrecord[$keyEntity]['val'];
+					$res = $ent->fetch($id);
+
+					if ($res <= 0 ){
+						$error++;
+						$langs->load("exports");
+						$this->errors[$error]['lib'] = $langs->trans('NotAnEntity', $id);
+						$this->errors[$error]['type'] = 'NOENTITY';
+					}
+
+				}else { // if not we force to conf->entity
+					$arrayrecord[$keyEntity]['val'] = $conf->entity;
+					$arrayrecord[$keyEntity]['type'] = 1;
+				}
+			}
+		}
+		/** FIN ************************** SPECIFIQUE EUROCHEF  */
 
 		//var_dump($array_match_file_to_database);
 		//var_dump($arrayrecord);
@@ -897,7 +931,7 @@ class ImportXlsx extends ModeleImports
 							// Build SQL INSERT request
 							$sqlstart = 'INSERT INTO ' . $tablename . '(' . implode(', ', $listfields) . ', import_key';
 							$sqlend = ') VALUES(' . implode(', ', $listvalues) . ", '" . $this->db->escape($importid) . "'";
-							if (!empty($tablewithentity_cache[$tablename])) {
+							if (!empty($tablewithentity_cache[$tablename]) && $keyEntity < 0) {
 								$sqlstart .= ', entity';
 								$sqlend .= ', ' . $conf->entity;
 							}
