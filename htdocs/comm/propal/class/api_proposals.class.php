@@ -273,14 +273,16 @@ class Proposals extends DolibarrApi
 	/**
 	 * Get lines of a commercial proposal
 	 *
-	 * @param int   $id             Id of commercial proposal
+	 * @param int		$id             Id of commercial proposal
+	 * @param string    $sqlfilters		Other criteria to filter answers. Syntax example "(d.fk_product = 5) and (p.fk_product_type = 0) => d is the alias for lines table, p is the alias for product table"
 	 *
 	 * @url	GET {id}/lines
 	 *
 	 * @return int
 	 */
-	public function getLines($id)
+	public function getLines($id, $sqlfilters = '')
 	{
+		$filters = "";
 		if (!DolibarrApiAccess::$user->rights->propal->lire) {
 			throw new RestException(401);
 		}
@@ -293,7 +295,22 @@ class Proposals extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-		$this->propal->getLinesArray();
+
+		if (!empty($sqlfilters))
+		{
+			if (!DolibarrApi::_checkFilters($sqlfilters))
+			{
+				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			}
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$filters = " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+		}
+
+		$resLines = $this->propal->getLinesArray($filters);
+		if ($resLines < 0)
+		{
+			throw new RestException(503, 'Syntax error with parameter sqlfilters '.$sqlfilters);
+		}
 		$result = array();
 		foreach ($this->propal->lines as $line) {
 			array_push($result, $this->_cleanObjectDatas($line));
