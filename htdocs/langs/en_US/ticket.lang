@@ -100,7 +100,6 @@ TicketsEmailMustExistHelp=In the public interface, the email address should alre
 TicketsMailAlertAssignTicket=Send a mail to the user when a ticket is assigned to him
 TicketsMailAlertAssignTicketHelp=When assigning a ticket to a user, this user will be alerted by mail
 TicketEmailAssignNotificationFrom=Sender email for assignment notification
-TicketEmailAssignNotificationFromHelp=Sender email for assignment notification
 PublicInterface=Public interface
 TicketUrlPublicInterfaceLabelAdmin=Alternative URL for public interface
 TicketUrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server and thus make available the public interface with another URL (the server must act as a proxy on this new URL)

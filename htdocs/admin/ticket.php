@@ -634,7 +634,6 @@ print '<tr class="oddeven"><td>'.$langs->trans("TicketEmailAssignNotificationFro
 print '<td class="left">';
 print '<input type="text" name="TICKET_ASSIGN_NOTIFICATION_EMAIL_FROM" value="'.(!empty($conf->global->TICKET_ASSIGN_NOTIFICATION_EMAIL_FROM) ? $conf->global->TICKET_ASSIGN_NOTIFICATION_EMAIL_FROM : '').'"></td>';
 print '<td class="center">';
-print $form->textwithpicto('', $langs->trans("TicketEmailAssignNotificationFromHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 
