@@ -291,6 +291,8 @@ class Products extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
+		global $conf, $db;
+
 		if (!DolibarrApiAccess::$user->rights->produit->creer) {
 			throw new RestException(401);
 		}
@@ -300,6 +302,18 @@ class Products extends DolibarrApi
 		foreach ($request_data as $field => $value) {
 			$this->product->$field = $value;
 		}
+
+		if ($this->product->entity != ""){
+			if ($conf->multicompany->enabled){
+				dol_include_once('/multicompany/class/dad_multicompany.class.php');
+				$ent = new DaoMulticompany($db);
+				$res = $ent->fetch($this->product->entity);
+				if ($res <= 0 ){
+					throw new RestException(500, "Error Entity does not exist ");
+				}
+			}
+		}
+
 		if ($this->product->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating product", array_merge(array($this->product->error), $this->product->errors));
 		}

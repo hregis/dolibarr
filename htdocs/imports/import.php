@@ -411,7 +411,7 @@ if ($step == 1 || !$datatoimport) {
 			print '<tr class="oddeven"><td>';
 			$titleofmodule = $objimport->array_import_module[$key]['module']->getName();
 			// Special cas for import common to module/services
-			if (in_array($objimport->array_import_code[$key], array('produit_supplierprices', 'produit_multiprice', 'produit_languages'))) {
+			if (in_array($objimport->array_import_code[$key], array('produit_supplierprices', 'produit_multiprice', 'produit_languages', 'produit_sousproduits'))) {
 				$titleofmodule = $langs->trans("ProductOrService");
 			}
 			print $titleofmodule;

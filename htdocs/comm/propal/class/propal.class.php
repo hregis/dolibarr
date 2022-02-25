@@ -734,6 +734,11 @@ class Propal extends CommonObject
 				// Reorder if child line
 				if (!empty($fk_parent_line)) {
 					$this->line_order(true, 'DESC');
+				} elseif($ranktouse > 0 && $ranktouse <= count($this->lines)) { // Update all rank of all other lines
+					$linecount = count($this->lines);
+					for ($ii = $ranktouse; $ii <= $linecount; $ii++) {
+						$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
+					}
 				}
 
 				// Mise a jour informations denormalisees au niveau de la propale meme
@@ -1074,6 +1079,7 @@ class Propal extends CommonObject
 		$sql .= ", datep";
 		$sql .= ", datec";
 		$sql .= ", ref";
+		$sql .= ", ref_ext";
 		$sql .= ", fk_user_author";
 		$sql .= ", note_private";
 		$sql .= ", note_public";
@@ -1107,6 +1113,7 @@ class Propal extends CommonObject
 		$sql .= ", '".$this->db->idate($this->date)."'";
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", '(PROV)'";
+		$sql .= ", '".$this->db->escape($this->ref_ext)."'";
 		$sql .= ", ".($user->id > 0 ? "'".$this->db->escape($user->id)."'" : "NULL");
 		$sql .= ", '".$this->db->escape($this->note_private)."'";
 		$sql .= ", '".$this->db->escape($this->note_public)."'";
@@ -1437,7 +1444,7 @@ class Propal extends CommonObject
 	 */
 	public function fetch($rowid, $ref = '', $ref_ext = '')
 	{
-		$sql = "SELECT p.rowid, p.ref, p.entity, p.remise, p.remise_percent, p.remise_absolue, p.fk_soc";
+		$sql = "SELECT p.rowid, p.ref, p.ref_ext, p.entity, p.remise, p.remise_percent, p.remise_absolue, p.fk_soc";
 		$sql .= ", p.total_ttc, p.total_tva, p.localtax1, p.localtax2, p.total_ht";
 		$sql .= ", p.datec";
 		$sql .= ", p.date_valid as datev";
@@ -1476,9 +1483,13 @@ class Propal extends CommonObject
 		if ($ref) {
 			$sql .= " WHERE p.entity IN (".getEntity('propal').")"; // Dont't use entity if you use rowid
 			$sql .= " AND p.ref='".$this->db->escape($ref)."'";
+		}elseif ($ref_ext){
+			$sql .= " WHERE p.entity IN (".getEntity('propal').")"; // Dont't use entity if you use rowid
+			$sql .= " AND p.ref_ext='".$this->db->escape($ref_ext)."'";
 		} else {
 			$sql .= " WHERE p.rowid = ".((int) $rowid);
 		}
+
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1490,6 +1501,7 @@ class Propal extends CommonObject
 				$this->entity               = $obj->entity;
 
 				$this->ref                  = $obj->ref;
+				$this->ref_ext              = $obj->ref_ext;
 				$this->ref_client           = $obj->ref_client;
 				$this->remise               = $obj->remise;
 				$this->remise_percent       = $obj->remise_percent;
@@ -1500,6 +1512,7 @@ class Propal extends CommonObject
 				$this->total_tva            = $obj->total_tva;
 				$this->total_localtax1		= $obj->localtax1;
 				$this->total_localtax2		= $obj->localtax2;
+				$this->total_ttc            = $obj->total;
 
 				$this->socid = $obj->fk_soc;
 				$this->thirdparty = null; // Clear if another value was already set by fetch_thirdparty
@@ -1712,7 +1725,7 @@ class Propal extends CommonObject
 	 *
 	 * @return		int						<0 if KO, >0 if OK
 	 */
-	public function fetch_lines($only_product = 0, $loadalsotranslation = 0)
+	public function fetch_lines($only_product = 0, $loadalsotranslation = 0, $sqlfilters = '')
 	{
 		global $langs, $conf;
 		// phpcs:enable
@@ -1730,6 +1743,9 @@ class Propal extends CommonObject
 		$sql .= ' WHERE d.fk_propal = '.$this->id;
 		if ($only_product) {
 			$sql .= ' AND p.fk_product_type = 0';
+		}
+		if ($sqlfilters) {
+			$sql .= $sqlfilters;
 		}
 		$sql .= ' ORDER by d.rang';
 
@@ -3686,9 +3702,9 @@ class Propal extends CommonObject
 	 *
 	 * 	@return int		>0 if OK, <0 if KO
 	 */
-	public function getLinesArray()
+	public function getLinesArray($sqlfilters = '')
 	{
-		return $this->fetch_lines();
+		return $this->fetch_lines(0, 0, $sqlfilters);
 	}
 
 	/**

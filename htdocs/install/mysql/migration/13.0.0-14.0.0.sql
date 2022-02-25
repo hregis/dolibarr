@@ -650,4 +650,8 @@ ALTER TABLE llx_facture_fourn CHANGE COLUMN fk_mode_transport fk_transport_mode 
 ALTER TABLE llx_c_socialnetworks DROP INDEX idx_c_socialnetworks_code;
 ALTER TABLE llx_c_socialnetworks ADD UNIQUE INDEX idx_c_socialnetworks_code_entity (code, entity);
 
+
+-- import key on llx_product_association
+
+ALTER TABLE llx_product_association ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_propaldet ADD COLUMN import_key varchar(14);

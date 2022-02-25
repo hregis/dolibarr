@@ -75,7 +75,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 					if ($res > 0) {
 						// Send email to notification email
 
-						if (empty($conf->global->TICKET_DISABLE_ALL_MAILS)) {
+						if (empty($conf->global->TICKET_DISABLE_ALL_MAILS) && ! empty($conf->global->TICKET_MAIL_ALERT_ON_ASSIGN_USER)) {
 							// Init to avoid errors
 							$filepath = array();
 							$filename = array();
@@ -83,6 +83,8 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 							// Send email to assigned user
 							$subject = '['.$conf->global->MAIN_INFO_SOCIETE_NOM.'] '.$langs->transnoentities('TicketAssignedToYou');
+							$message_intro = $conf->global->TICKET_MESSAGE_ASSIGN_MAIL_INTRO;
+							$message_signature = $conf->global->TICKET_MESSAGE_ASSIGN_MAIL_SIGNATURE;
 							$message = '<p>'.$langs->transnoentities('TicketAssignedEmailBody', $object->track_id, dolGetFirstLastname($user->firstname, $user->lastname))."</p>";
 							$message .= '<ul><li>'.$langs->trans('Title').' : '.$object->subject.'</li>';
 							$message .= '<li>'.$langs->trans('Type').' : '.$object->type_label.'</li>';
@@ -100,7 +102,10 @@ class InterfaceTicketEmail extends DolibarrTriggers
 							$message .= '<p><a href="'.dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id.'">'.$langs->trans('SeeThisTicketIntomanagementInterface').'</a></p>';
 
 							$sendto = $userstat->email;
-							$from = dolGetFirstLastname($user->firstname, $user->lastname).'<'.$user->email.'>';
+							if (!empty($conf->global->TICKET_ASSIGN_NOTIFICATION_EMAIL_FROM)) $from = $conf->global->MAIN_INFO_SOCIETE_NOM.'<'.$conf->global->TICKET_ASSIGN_NOTIFICATION_EMAIL_FROM.'>';
+							else $from = dolGetFirstLastname($user->firstname, $user->lastname).'<'.$user->email.'>';
+
+							$message = $message_intro.$message.$message_signature;
 
 							$message = dol_nl2br($message);
 

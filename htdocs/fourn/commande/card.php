@@ -75,6 +75,7 @@ $socid = GETPOST('socid', 'int');
 $projectid = GETPOST('projectid', 'int');
 $cancel         = GETPOST('cancel', 'alpha');
 $lineid         = GETPOST('lineid', 'int');
+$rank = (GETPOST('rank', 'int') > 0) ? GETPOST('rank', 'int') : -1;
 $origin = GETPOST('origin', 'alpha');
 $originid = (GETPOST('originid', 'int') ? GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
 
@@ -567,7 +568,8 @@ if (empty($reshook)) {
 					$productsupplier->fk_unit,
 					$pu_ht_devise,
 					'',
-					0
+					0,
+					min($rank, count($object->lines) + 1)
 				);
 			}
 			if ($idprod == -99 || $idprod == 0) {

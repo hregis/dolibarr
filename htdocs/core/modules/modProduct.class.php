@@ -472,6 +472,7 @@ class modProduct extends DolibarrModules
 			'p.ref' => "Ref*",
 			'p.label' => "Label*",
 			'p.fk_product_type' => "Type*",
+			'p.entity' => "Entity",
 			'p.tosell' => "OnSell*",
 			'p.tobuy' => "OnBuy*",
 			'p.description' => "Description",
@@ -663,6 +664,7 @@ class modProduct extends DolibarrModules
 			'p.ref' => "ref:PREF123456",
 			'p.datec' => dol_print_date(dol_now(), '%Y-%m-%d'),
 			'p.label' => "Product name in default language",
+			'p.entity' => "(empty if you want to add product to active entity or int",
 			'p.description' => "Product description in default language",
 			'p.note_public' => "a public note (free text)",
 			'p.note' => "a private note (free text)",
@@ -743,6 +745,7 @@ class modProduct extends DolibarrModules
 		}
 		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
 		$this->import_updatekeys_array[$r] = array('p.ref'=>'Ref');
+		if (!empty($conf->multicompany->enabled)) $this->import_updatekeys_array[$r] = array_merge($this->import_updatekeys_array[$r], array('p.entity'=>'Entity'));
 		if (!empty($conf->barcode->enabled)) {
 			$this->import_updatekeys_array[$r] = array_merge($this->import_updatekeys_array[$r], array('p.barcode'=>'BarCode')); //only show/allow barcode as update key if Barcode module enabled
 		}
@@ -893,6 +896,25 @@ class modProduct extends DolibarrModules
 				'pr.tva_tx'=>'20',
 				'pr.recuperableonly'=>'0',
 				'pr.date_price'=>'2020-12-31');
+		}
+
+		if (!empty($conf->global->PRODUIT_SOUSPRODUITS))
+		{
+			// Imports virtual products
+			$r++;
+			$this->import_code[$r] = $this->rights_class.'_sousproduits';
+			$this->import_label[$r] = "AssociatedProducts"; // Translation key
+			$this->import_icon[$r] = $this->picto;
+			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
+			$this->import_tables_array[$r] = array('pr'=>MAIN_DB_PREFIX.'product_association');
+			$this->import_fields_array[$r] = array('pr.fk_product_pere'=>"ParentProduct", 'pr.fk_product_fils'=>"ComposedProduct", 'pr.qty'=>"Qty", 'pr.incdec'=>'ComposedProductIncDecStock');
+			$this->import_regex_array[$r] = array('s.incdec' => '^[0|1]');
+			$this->import_convertvalue_array[$r] = array(
+				'pr.fk_product_pere'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/class/product.class.php', 'class'=>'Product', 'method'=>'fetch', 'element'=>'Product'),
+				'pr.fk_product_fils'=>array('rule'=>'fetchidfromref', 'classfile'=>'/product/class/product.class.php', 'class'=>'Product', 'method'=>'fetch', 'element'=>'Product')
+			);
+			$this->import_examplevalues_array[$r] = array('pr.fk_product_pere'=>"PRODUCT_REF or id:123456", 'pr.fk_product_fils'=>"PRODUCT_REF or id:123456", 'pr.qty'=>"100", 'pr.incdec'=>"1=Increase/Decrease stock on parent change, 0=No action on child stock");
+			$this->import_updatekeys_array[$r] = array('l.fk_product_pere'=>'ParentProduct', 'l.fk_product_fils'=>'OneComposedProduct');
 		}
 
 		if (!empty($conf->global->MAIN_MULTILANGS)) {

@@ -308,6 +308,11 @@ if ($nolinesbefore) {
 			echo '<input type="hidden" name="pbq" id="pbq" value="">';
 			echo '</span>';
 		}
+
+		if(!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
+			echo '<br>'.$langs->trans('AddLineOnPosition').' : <input type="number" name="rank" step="1" min="0" style="width: 5em;">';
+		}
+
 		if (is_object($hookmanager) && empty($senderissupplier)) {
 			$parameters = array('fk_parent_line'=>GETPOST('fk_parent_line', 'int'));
 			$reshook = $hookmanager->executeHooks('formCreateProductOptions', $parameters, $object, $action);
