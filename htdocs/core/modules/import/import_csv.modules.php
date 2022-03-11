@@ -333,35 +333,6 @@ class ImportCsv extends ModeleImports
 				if ($value == "p.entity"){
 					$keyEntity =  $key-1;
 				}
-				if (in_array($objimport->array_import_code[0], array('produit_2'))){
-
-					if ($value == "p.rowid"){
-						$keyRowid =  $key-1;
-					}
-
-					if ($value == "p.ref"){
-						$keyRef =  $key-1;
-						/**
-						 * la cellule du rowid n'est pas vide mais la ref l'est
-						 * on load la ref du produit en cours pour l'affecter à l'arrayRecord
-						 * la ref est renseignée l'update pourra se faire.
-						 */
-						if (!empty($arrayrecord[$keyRowid]['val']) ){
-							if (empty($arrayrecord[$keyRef]['val'])){
-								// on load la ref existante du produit
-								$sql  = "SELECT ref from ".MAIN_DB_PREFIX."product WHERE rowid = ".$arrayrecord[$keyRowid]['val'];
-								$resql = $db->query($sql);
-								if ($resql) {
-									$o = $db->fetch_object($resql);
-									$arrayrecord[$keyRef]['val'] = $o->ref;
-									$arrayrecord[($keyRef)]['type'] = 1;
-								}
-							}
-						}
-					}
-
-
-				}
 			}
 
 			if (empty($arrayrecord[$keyEntity]['val'])){

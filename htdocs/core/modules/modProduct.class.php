@@ -952,7 +952,7 @@ class modProduct extends DolibarrModules
 		);
 		// field order as per structure of table llx_product
 		$import_sample = array(
-			'p.rowid' => "id:1115",
+			'p.rowid' => "1115",
 			'p.ref' => "P1115 (empty if you don't want to update ref)",
 			'p.datec' => dol_print_date(dol_now(), '%Y-%m-%d'),
 			'p.label' => "Product name in default language",
