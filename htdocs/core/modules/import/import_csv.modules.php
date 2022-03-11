@@ -324,11 +324,9 @@ class ImportCsv extends ModeleImports
 		$this->warnings = array();
 
 		/** ************************** SPECIFIQUE EUROCHEF  */
-		if (   in_array($objimport->array_import_code[0], array('produit_1', 'produit_2'))){
+		if (   in_array($objimport->array_import_code[0], array('produit_1'))){
 
 			$keyEntity = -1;
-			$keyRowid = -1;
-			$keyRef = -1;
 			foreach ($array_match_file_to_database as $key => $value){
 				if ($value == "p.entity"){
 					$keyEntity =  $key-1;
