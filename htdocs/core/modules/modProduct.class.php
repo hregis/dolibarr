@@ -742,7 +742,7 @@ class modProduct extends DolibarrModules
 			));
 		}
 		$this->import_examplevalues_array[$r] = array_merge($import_sample, $import_extrafield_sample);
-		$this->import_updatekeys_array[$r] = array('p.ref'=>'ref');
+		$this->import_updatekeys_array[$r] = array('p.ref'=>'Ref');
 		if (!empty($conf->multicompany->enabled)) $this->import_updatekeys_array[$r] = array_merge($this->import_updatekeys_array[$r], array('p.entity'=>'Entity'));
 		if (!empty($conf->barcode->enabled)) {
 			$this->import_updatekeys_array[$r] = array_merge($this->import_updatekeys_array[$r], array('p.barcode'=>'BarCode')); //only show/allow barcode as update key if Barcode module enabled
