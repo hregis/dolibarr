@@ -634,7 +634,7 @@ function checkUserAccessToObject($user, array $featuresarray, $objectid = 0, $ta
 		if (in_array($feature, $check)) {
 			$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-			if (!empty($conf->multicompany->enabled)) {	// Special for multicompany
+			if (($feature == 'user' || $feature == 'usergroup') && !empty($conf->multicompany->enabled)) {	// Special for multicompany
 				if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 					if ($conf->entity == 1 && $user->admin && !$user->entity) {
 						$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
@@ -661,13 +661,15 @@ function checkUserAccessToObject($user, array $featuresarray, $objectid = 0, $ta
 					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 				}
 			}
-		} elseif (in_array($feature, $checksoc)) {	// We check feature = checksoc
+			$checkonentitydone = 1;
+		}
+		if (in_array($feature, $checksoc)) {	// We check feature = checksoc
 			// If external user: Check permission for external users
 			if ($user->socid > 0) {
-				if ($user->socid <> $objectid) {
+				if ($user->socid != $objectid) {
 					return false;
 				}
-			} elseif (!empty($conf->societe->enabled) && ($user->rights->societe->lire && !$user->rights->societe->client->voir)) {
+			} elseif (!empty($conf->societe->enabled) && ($user->rights->societe->lire && empty($user->rights->societe->client->voir))) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				$sql = "SELECT COUNT(sc.fk_soc) as nb";
 				$sql .= " FROM (".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -683,14 +685,17 @@ function checkUserAccessToObject($user, array $featuresarray, $objectid = 0, $ta
 				$sql .= " WHERE s.rowid IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND s.entity IN (".getEntity($sharedelement, 1).")";
 			}
-		} elseif (in_array($feature, $checkother)) {	// Test on entity + link to thirdparty. Allowed if link is empty (Ex: contacts...).
+
+			$checkonentitydone = 1;
+		}
+		if (in_array($feature, $checkother)) {	// Test on entity + link to thirdparty. Allowed if link is empty (Ex: contacts...).
 			// If external user: Check permission for external users
 			if ($user->socid > 0) {
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND dbt.fk_soc = ".((int) $user->socid);
-			} elseif (!empty($conf->societe->enabled) && ($user->rights->societe->lire && !$user->rights->societe->client->voir)) {
+			} elseif (!empty($conf->societe->enabled) && ($user->rights->societe->lire && empty($user->rights->societe->client->voir))) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
