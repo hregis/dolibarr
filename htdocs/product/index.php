@@ -139,7 +139,7 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 	$sql .= ' WHERE p.entity IN ('.getEntity($product_static->element, 1).')';
 	// Add where from hooks
 	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $product_static); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
 	$sql .= " GROUP BY p.fk_product_type, p.tosell, p.tobuy";
 	$result = $db->query($sql);
@@ -292,7 +292,7 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 	}
 	// Add where from hooks
 	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $product_static); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
 	$sql .= $db->order("p.tms", "DESC");
 	$sql .= $db->plimit($max, 0);

@@ -106,7 +106,7 @@ if (!$user->rights->fournisseur->lire) {
 }
 // Add where from hooks
 $parameters = array('socid' => $socid);
-$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $thirdparty_static); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	if ($socid > 0) {
 		$sql .= " AND s.rowid = ".((int) $socid);
@@ -286,7 +286,7 @@ if (!$user->rights->fournisseur->lire) {
 }
 // Add where from hooks
 $parameters = array('socid' => $socid);
-$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $thirdparty_static); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	if ($socid > 0) {
 		$sql .= " AND s.rowid = ".((int) $socid);
@@ -392,7 +392,7 @@ print $boxlist;
 print '</div>';
 
 $parameters = array('user' => $user);
-$reshook = $hookmanager->executeHooks('dashboardThirdparties', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('dashboardThirdparties', $parameters, $thirdparty_static); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

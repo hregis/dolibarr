@@ -97,6 +97,8 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'produit|service', 0, 'product&product');
 
+$object = new Product($db);
+
 
 /*
  * Actions
@@ -137,7 +139,7 @@ if (!empty($conf->global->PRODUCT_USE_UNITS)) {
 }
 // Add fields from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as s ON p.rowid = s.fk_product';
@@ -194,13 +196,13 @@ if ($search_categ > 0) {
 }
 // Add where from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,";
 $sql .= " p.fk_product_type, p.tms, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock";
 // Add fields from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldSelect', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 if ($toolowstock) {
 	$sql .= " HAVING SUM(".$db->ifsql('s.reel IS NULL', '0', 's.reel').") < p.seuil_stock_alerte";
@@ -321,7 +323,7 @@ if ($resql) {
 		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
 		$parameters = array();
-		$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		print '</div>';
 	}
@@ -389,7 +391,7 @@ if ($resql) {
 	print '<td class="liste_titre" colspan="'.$colspan_warehouse.'">&nbsp;</td>';
 	print '<td class="liste_titre"></td>';
 	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
+	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterAndCheckAddButtons(0);
@@ -502,7 +504,7 @@ if ($resql) {
 		print '<td class="right nowrap">'.$product->LibStatut($objp->tobuy, 5, 1).'</td>';
 		// Fields from hook
 		$parameters = array('obj'=>$objp);
-		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $product); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		print '<td></td>';
 		print "</tr>\n";
