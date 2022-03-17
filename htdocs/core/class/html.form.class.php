@@ -3083,7 +3083,8 @@ class Form
 	public function select_produits_fournisseurs_list($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $filterkey = '', $statut = -1, $outputmode = 0, $limit = 100, $alsoproductwithnosupplierprice = 0, $morecss = '', $showstockinlist = 0, $placeholder = '')
 	{
 		// phpcs:enable
-		global $langs, $conf, $db, $user;
+		global $langs, $conf, $user;
+		global $hookmanager;
 
 		$out = '';
 		$outarray = array();
@@ -3133,6 +3134,10 @@ class Form
 		if (!empty($filtre)) {
 			$sql .= " ".$filtre;
 		}
+		// Add where from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('selectSuppliersProductsListWhere', $parameters); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		// Add criteria on ref/label
 		if ($filterkey != '') {
 			$sql .= ' AND (';
