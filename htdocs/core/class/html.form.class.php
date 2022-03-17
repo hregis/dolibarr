@@ -2380,6 +2380,7 @@ class Form
 	{
 		// phpcs:enable
 		global $langs, $conf, $user, $db;
+		global $hookmanager;
 
 		$out = '';
 		$outarray = array();
@@ -2522,6 +2523,10 @@ class Form
 		} elseif (empty($conf->service->enabled)) { // when service module is disabled, show products only
 			$sql .= " AND p.fk_product_type = 0";
 		}
+		// Add where from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('selectProductsListWhere', $parameters); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		// Add criteria on ref/label
 		if ($filterkey != '') {
 			$sql .= ' AND (';
