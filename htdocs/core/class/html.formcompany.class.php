@@ -617,7 +617,7 @@ class FormCompany extends Form
 	 */
 	public function selectCompaniesForNewContact($object, $var_id, $selected = '', $htmlname = 'newcompany', $limitto = '', $forceid = 0, $moreparam = '', $morecss = '')
 	{
-		global $conf, $langs;
+		global $conf, $hookmanager;
 
 		if (!empty($conf->use_javascript_ajax) && !empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) {
 			// Use Ajax search
@@ -707,6 +707,10 @@ class FormCompany extends Form
 			if (is_array($limitto) && count($limitto)) {
 				$sql .= " AND s.rowid IN (".$this->db->sanitize(join(',', $limitto)).")";
 			}
+			// Add where from hooks
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('selectCompaniesForNewContactListWhere', $parameters); // Note that $action and $object may have been modified by hook
+			$sql .= $hookmanager->resPrint;
 			$sql .= " ORDER BY s.nom ASC";
 
 			$resql = $this->db->query($sql);
