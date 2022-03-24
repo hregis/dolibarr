@@ -4259,9 +4259,10 @@ abstract class CommonObject
 	 *  Check is done into this->childtables. There is no check into llx_element_element.
 	 *
 	 *  @param	int		$id			Force id of object
+	 *  @param	int		$entity		Force entity to check
 	 *  @return	int					<0 if KO, 0 if not used, >0 if already used
 	 */
-	public function isObjectUsed($id = 0)
+	public function isObjectUsed($id = 0, $entity = 0)
 	{
 		global $langs;
 
@@ -4284,11 +4285,21 @@ abstract class CommonObject
 
 		// Test if child exists
 		$haschild = 0;
-		foreach ($arraytoscan as $table => $elementname) {
+		foreach ($arraytoscan as $table => $element) {
 			//print $id.'-'.$table.'-'.$elementname.'<br>';
-			// Check if third party can be deleted
-			$sql = "SELECT COUNT(*) as nb from ".MAIN_DB_PREFIX.$table;
-			$sql .= " WHERE ".$this->fk_element." = ".((int) $id);
+			// Check if element can be deleted
+			$sql = "SELECT COUNT(*) as nb";
+			$sql.= " FROM ".MAIN_DB_PREFIX.$table." as c";
+			if (!empty($element['parent']) && !empty($element['parentkey'])) {
+				$sql.= ", ".MAIN_DB_PREFIX.$element['parent']." as p";
+			}
+			$sql.= " WHERE c.".$this->fk_element." = ".((int) $id);
+			if (!empty($element['parent']) && !empty($element['parentkey'])) {
+				$sql.= " AND c.".$element['parentkey']." = p.rowid";
+			}
+			if (!empty($entity)) {
+				$sql.= " AND p.entity = ".((int) $entity);
+			}
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
@@ -4296,11 +4307,10 @@ abstract class CommonObject
 					$langs->load("errors");
 					//print 'Found into table '.$table.', type '.$langs->transnoentitiesnoconv($elementname).', haschild='.$haschild;
 					$haschild += $obj->nb;
-					if (is_numeric($elementname)) {	// old usage
+					if (is_numeric($element) || empty($element['name'])) {	// old usage
 						$this->errors[] = $langs->trans("ErrorRecordHasAtLeastOneChildOfType", $table);
-					} else // new usage: $elementname=Translation key
-					{
-						$this->errors[] = $langs->trans("ErrorRecordHasAtLeastOneChildOfType", $langs->transnoentitiesnoconv($elementname));
+					} else { // new usage: $element['name']=Translation key
+						$this->errors[] = $langs->trans("ErrorRecordHasAtLeastOneChildOfType", $langs->transnoentitiesnoconv($element['name']));
 					}
 					break; // We found at least one, we stop here
 				}
