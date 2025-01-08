@@ -11035,12 +11035,6 @@ parameters:
 			path: ../../../htdocs/core/lib/admin.lib.php
 
 		-
-			message: '#^Loose comparison using \!\= between ''llx_'' and ''llx_'' will always evaluate to false\.$#'
-			identifier: notEqual.alwaysFalse
-			count: 1
-			path: ../../../htdocs/core/lib/admin.lib.php
-
-		-
 			message: '#^Offset 1 on array\{string, non\-falsy\-string, string\} in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.offset
 			count: 1
